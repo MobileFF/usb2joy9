@@ -1,0 +1,15 @@
+# CMake ビルド出力 (配布用の uf2 は firmware/ に置く)
+build*/
+CMakeFiles/
+CMakeCache.txt
+
+# Python
+__pycache__/
+*.pyc
+
+# KiCad のバックアップ・ローカル設定
+*.kicad_prl
+*-backups/
+_autosave-*
+*.lck
+fp-info-cache

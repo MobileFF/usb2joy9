@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "filename": "usb2msxjoy.kicad_pro",
+    "version": 3
+  },
+  "sheets": [],
+  "boards": [],
+  "libraries": {
+    "pinned_symbol_libs": [],
+    "pinned_footprint_libs": []
+  }
+}
