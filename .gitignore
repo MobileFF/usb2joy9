@@ -1,7 +1,10 @@
-# CMake ビルド出力 (配布用の uf2 は firmware/ に置く)
+# CMake ビルド出力 (配布用の uf2 は firmware/MSX/ と firmware/MD/ に置く)
 build*/
 CMakeFiles/
 CMakeCache.txt
+
+# 調査用のピン確認ファームウェア (ソースは tools/pintest/)
+firmware/pintest_pico.uf2
 
 # Python
 __pycache__/

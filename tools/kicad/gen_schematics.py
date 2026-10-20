@@ -47,7 +47,7 @@ LIB_SYMBOLS = [
 DESIGNS = {
     "usb2msxjoy": {
         "title": "usb2msxjoy - USB joystick to MSX (FXMA108)",
-        "firmware": "firmware/usb2msxjoy_pico_fxma108.uf2",
+        "firmware": "firmware/MSX/usb2msxjoy_pico_fxma108.uf2",
         "signals": [
             ("GPIO2", "A0", "B0", "1", "UP"),
             ("GPIO3", "A1", "B1", "2", "DOWN"),
@@ -65,7 +65,7 @@ DESIGNS = {
     },
     "usb2mdjoy": {
         "title": "usb2mdjoy - USB joystick to Mega Drive 3-button (FXMA108)",
-        "firmware": "firmware/usb2mdjoy_pico_fxma108.uf2",
+        "firmware": "firmware/MD/usb2mdjoy_pico_fxma108.uf2",
         "signals": [
             ("GPIO2", "A0", "B0", "1", "UP"),
             ("GPIO3", "A1", "B1", "2", "DOWN"),

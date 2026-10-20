@@ -22,6 +22,14 @@ TARGET_NAMES = {"MSX": "MSX", "MD": "メガドライブ (3ボタン)"}
 # キーボードのキーが何番のボタンになるか (ファームウェアの gp_decode_keyboard と同じ)
 KEY_HINTS = {0: "キーボード Space / Z", 1: "キーボード X / M", 2: "キーボード C", 9: "キーボード Enter"}
 
+CONFIG_ONLY_NOTE = (
+    "この UF2 は設定データだけです (ファームウェアは含みません)。\n"
+    "書き込むとフラッシュ末尾の設定領域だけが書き換わり、Pico のファームウェアはそのまま残ります。\n\n"
+    "・ボード (Pico / RP2040-Zero) や出力方式 (FXMA108 など) に関係なく使えます。\n"
+    "・接続先 ({target}) はファームウェアと合わせてください。違う場合は無視され、既定値で動きます。\n"
+    "・ボタン割り当て設定に対応したファームウェアが先に書き込まれている必要があります。"
+)
+
 
 class App(ttk.Frame):
     def __init__(self, root):
@@ -77,7 +85,7 @@ class App(ttk.Frame):
         ttk.Button(bar, text="既定値に戻す", command=self.on_default).pack(side="left")
         ttk.Button(bar, text="開く…", command=self.on_open).pack(side="left", padx=4)
         ttk.Button(bar, text="JSON 保存…", command=self.on_save_json).pack(side="left")
-        ttk.Button(bar, text="UF2 書き出し…", command=self.on_save_uf2).pack(side="left", padx=4)
+        ttk.Button(bar, text="設定 UF2 書き出し…", command=self.on_save_uf2).pack(side="left", padx=4)
         b = ttk.Button(bar, text="Pico から読み込み", command=self.on_read_pico)
         b.pack(side="right")
         if not shutil.which("picotool"):
@@ -142,7 +150,7 @@ class App(ttk.Frame):
         except (OSError, ValueError, KeyError) as e:
             messagebox.showerror("読み込みエラー", str(e))
 
-    def _save(self, ext, data_fn, title):
+    def _save(self, ext, data_fn, title, note=None):
         try:
             cfg = self.get_config()
         except ValueError as e:
@@ -159,12 +167,18 @@ class App(ttk.Frame):
             self.status.set(f"保存しました: {path}")
         except OSError as e:
             messagebox.showerror("保存エラー", str(e))
+            return
+        if note:
+            messagebox.showinfo("UF2 を書き出しました", f"{path}\n\n" + note(cfg))
 
     def on_save_json(self):
         self._save(".json", lambda c: c.to_json().encode("utf-8"), "JSON")
 
     def on_save_uf2(self):
-        self._save(".uf2", lambda c: c.to_uf2(), "UF2")
+        self._save(".uf2", lambda c: c.to_uf2(), "UF2", note=self.config_only_note)
+
+    def config_only_note(self, cfg):
+        return CONFIG_ONLY_NOTE.format(target=TARGET_NAMES[cfg.target])
 
     def on_write_pico(self):
         try:
@@ -177,7 +191,7 @@ class App(ttk.Frame):
             messagebox.showwarning(
                 "Pico が見つかりません",
                 "BOOTSEL ボタンを押しながら Pico を PC につなぎ、RPI-RP2 ドライブが現れてから\n"
-                "もう一度押してください。\n\n見つからない場合は「UF2 書き出し」で保存したファイルを\n"
+                "もう一度押してください。\n\n見つからない場合は「設定 UF2 書き出し」で保存したファイルを\n"
                 "RPI-RP2 ドライブに手動でコピーしてください。")
             return
         try:
@@ -186,6 +200,10 @@ class App(ttk.Frame):
             self.status.set(f"{drive} に書き込みました。Pico は自動で再起動します")
         except OSError as e:
             messagebox.showerror("書き込みエラー", str(e))
+            return
+        messagebox.showinfo("Pico に書き込みました",
+                            f"{drive} に設定を書き込みました。Pico は自動で再起動します。\n\n"
+                            + self.config_only_note(cfg))
 
     def on_read_pico(self):
         with tempfile.TemporaryDirectory() as d:
